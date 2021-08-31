@@ -1,4 +1,4 @@
-package br.org.generation.minhaLojaDeGames.model;
+package br.org.generation.farmacia.model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,36 +11,33 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-
-
 @Entity
-@Table(name = "tb_produto")
-public class Produto {//id, nome, descricao, preco, quantidade
-	
+@Table(name ="tb_produto")
+public class Produto {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
-	@NotNull (message = "O atributo nome é obrigatório!")
+	@NotNull(message = "O atributo nome é obrigatório")
 	@Size(max = 255)
 	private String nome;
 	
-	@NotNull (message = "O atributo descrição é obrigatório!")
 	@Size(max = 255)
 	private String descricao;
 	
-	@NotNull (message = "O atributo preço é obrigatório!")
+	@NotNull(message = "O atributo preço é obrigatório")
 	private double preco;
 	
-	@NotNull (message = "O atributo quantidade é obrigatório!")
-	private int qtd;
-
 	@ManyToOne
 	@JsonIgnoreProperties("produto")
 	private Categoria categoria;
+
 	
-	//############ GETTERS & SETTERS ############
 	
+	// GETTERS & SETTERS
+	
+		
 	public long getId() {
 		return id;
 	}
@@ -73,22 +70,13 @@ public class Produto {//id, nome, descricao, preco, quantidade
 		this.preco = preco;
 	}
 
-	public int getQtd() {
-		return qtd;
-	}
-
-	public void setQtd(int qtd) {
-		this.qtd = qtd;
-	}
-
 	public Categoria getCategoria() {
 		return categoria;
 	}
 
 	public void setCategoria(Categoria categoria) {
 		this.categoria = categoria;
-	}	
+	}
+	
 
-	
-	
 }
