@@ -54,21 +54,27 @@ public class UsuarioService {
 		return Optional.of(usuarioRepository.save(usuario));
 	}
 	
-	public Optional<Usuario> atualizarUsuario(Usuario usuario) {
-		
-		if(usuarioRepository.findByUsuario(usuario.getUsuario()).isPresent())
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O Usuário já existe!", null);
 	
-		int idade = Period.between(usuario.getDataNascimento(), LocalDate.now()).getYears();
-		
-		if(idade < 18) {
+	public Optional<Usuario> atualizarUsuario(Usuario usuario){
+		for (Usuario user : this.listarUsuarios()) {
+            if (user.getUsuario().equals(usuario.getUsuario())) {
+            	throw new ResponseStatusException(HttpStatus.CONFLICT, "Ja existe um usuario com esse nome", null);
+            }
+        }
+		if (usuarioRepository.findByUsuario(usuario.getUsuario()).isEmpty()){
+			int idade = Period.between(usuario.getDataNascimento(), LocalDate.now()).getYears();
+			if (idade < 18)
 				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O Usuário é menor de idade!", null);
-				usuario.setSenha(encoder(usuario.getSenha()));
 			
+			usuario.setSenha(encoder(usuario.getSenha()));
 			return Optional.of(usuarioRepository.save(usuario));
-		}else {
+		
+		}else{
+			
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "O Usuário não encontrado!", null);
+			
 		}
+		
 	}
 	
 	public Optional<UsuarioLogin> loginUsuario(Optional <UsuarioLogin> usuarioLogin){
@@ -78,7 +84,7 @@ public class UsuarioService {
 		if(usuario.isPresent()) {
 			
 			if(encoder.matches(usuarioLogin.get().getSenha(), usuario.get().getSenha())) {
-				//criar criptografia
+		
 				String auth = usuarioLogin.get().getUsuario() + ":" + usuarioLogin.get().getSenha();
 				byte[] encodeAuth = Base64.encodeBase64(auth.getBytes(Charset.forName("US-ASCII")));
 				String authHeader = "Basic " + new String(encodeAuth);
